@@ -2,11 +2,11 @@ import json
 from django.urls import reverse
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient, APITestCase
-from rest_framework.views import status
+from rest_framework import status
 
-from order.factories import UserFactory
 from product.factories import CategoryFactory, ProductFactory
 from product.models import Product
+from order.factories import UserFactory
 
 
 class TestProductViewSet(APITestCase):
@@ -34,10 +34,13 @@ class TestProductViewSet(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         product_data = json.loads(response.content)
 
-        # Convertendo o valor retornado para float para comparar com self.product.price
-        self.assertEqual(float(product_data[0]["price"]), float(self.product.price))
-        self.assertEqual(product_data[0]["title"], self.product.title)
-        self.assertEqual(product_data[0]["active"], self.product.active)
+        # Verificar se a lista de produtos não está vazia
+        self.assertGreater(len(product_data.get('results', [])), 0, "Nenhum produto encontrado na resposta")
+
+        # Comparar os dados do produto
+        self.assertEqual(float(product_data['results'][0]["price"]), float(self.product.price))
+        self.assertEqual(product_data['results'][0]["title"], self.product.title)
+        self.assertEqual(product_data['results'][0]["active"], self.product.active)
 
     def test_create_product(self):
         token = Token.objects.get(user__username=self.user.username)
