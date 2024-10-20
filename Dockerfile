@@ -18,6 +18,7 @@ ENV PYTHONUNBUFFERED=1 \
 ENV PATH="$POETRY_HOME/bin:$VENV_PATH/bin:$PATH"
 
 # Atualizar os pacotes e instalar dependências essenciais
+# Incluindo dependências para compilar o psycopg2
 RUN apt-get update && apt-get install --no-install-recommends -y \
     curl build-essential libpq-dev gcc
 
@@ -28,7 +29,7 @@ RUN curl -sSL https://install.python-poetry.org | python3 -
 WORKDIR $PYSETUP_PATH
 COPY poetry.lock pyproject.toml ./
 
-# Instalar as dependências de produção do projeto
+# Instalar as dependências de produção do projeto, incluindo psycopg2
 RUN poetry install --no-dev
 
 # Copiar todo o código da aplicação para o diretório /app
