@@ -27,23 +27,26 @@ INSTALLED_APPS = [
     "rest_framework.authtoken",
     "order",
     "product",
+    "debug_toolbar",
 ]
 
 MIDDLEWARE = [
+    "debug_toolbar.middleware.DebugToolbarMiddleware",  # Adicionar esta linha
     "django.middleware.security.SecurityMiddleware",
-    "django.contrib.sessions.middleware.SessionMiddleware",  # Adicionei essa linha
+    "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
-    "django.contrib.auth.middleware.AuthenticationMiddleware",  # Adicionei essa linha
-    "django.contrib.messages.middleware.MessageMiddleware",  # Adicionei essa linha
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
+
 
 ROOT_URLCONF = "bookstore.urls"
 
 TEMPLATES = [
     {
-        "BACKEND": "django.template.backends.django.DjangoTemplates",  # Certifique-se de ter essa linha
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
         "DIRS": [],  # Caso tenha diretórios de templates adicionais, pode adicioná-los aqui
         "APP_DIRS": True,  # Isso permite que o Django busque templates dentro dos diretórios dos apps
         "OPTIONS": {
@@ -107,3 +110,14 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+INTERNAL_IPS = [
+    "127.0.0.1",
+]
+
+
+# Django REST Framework settings
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 5,
+}
