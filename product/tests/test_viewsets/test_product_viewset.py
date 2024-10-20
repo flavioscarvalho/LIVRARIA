@@ -24,23 +24,25 @@ class TestProductViewSet(APITestCase):
 
     def test_get_all_product(self):
         token = Token.objects.get(user__username=self.user.username)
-        self.client.credentials(
-            HTTP_AUTHORIZATION="Token " + token.key
-        )
-        response = self.client.get(
-            reverse("product-list", kwargs={"version": "v1"})
-        )
+        self.client.credentials(HTTP_AUTHORIZATION="Token " + token.key)
+        response = self.client.get(reverse("product-list", kwargs={"version": "v1"}))
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         product_data = json.loads(response.content)
 
         # Verificar se a lista de produtos não está vazia
-        self.assertGreater(len(product_data.get('results', [])), 0, "Nenhum produto encontrado na resposta")
+        self.assertGreater(
+            len(product_data.get("results", [])),
+            0,
+            "Nenhum produto encontrado na resposta",
+        )
 
         # Comparar os dados do produto
-        self.assertEqual(float(product_data['results'][0]["price"]), float(self.product.price))
-        self.assertEqual(product_data['results'][0]["title"], self.product.title)
-        self.assertEqual(product_data['results'][0]["active"], self.product.active)
+        self.assertEqual(
+            float(product_data["results"][0]["price"]), float(self.product.price)
+        )
+        self.assertEqual(product_data["results"][0]["title"], self.product.title)
+        self.assertEqual(product_data["results"][0]["active"], self.product.active)
 
     def test_create_product(self):
         token = Token.objects.get(user__username=self.user.username)
