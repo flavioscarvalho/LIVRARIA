@@ -20,6 +20,10 @@ from django.conf import settings
 from django.contrib import admin
 from django.urls import path, re_path, include
 from rest_framework.authtoken.views import obtain_auth_token
+from django.http import HttpResponse
+
+def health_check(request):
+    return HttpResponse("API Running", status=200)
 
 # Definição das rotas (URLs) para a aplicação
 urlpatterns = [
@@ -28,19 +32,13 @@ urlpatterns = [
     re_path(r"bookstore/(?P<version>(v1|v2))/", include("order.urls")),  
     re_path(r"bookstore/(?P<version>(v1|v2))/", include("product.urls")),
     # Rota para autenticação de token usando Django Rest Framework
-    path(
-        "api-token-auth/", obtain_auth_token, name="api_token_auth"
-    ),  # Corrigido 'nome' para 'name'
+    path("api-token-auth/", obtain_auth_token, name="api_token_auth"),
+    path('', health_check),  # Ponto de verificação básico
 ]
+
 
 # Adicionando URLs do debug_toolbar se o modo DEBUG estiver ativado
 if settings.DEBUG:
     urlpatterns += [
         path("__debug__/", include(debug_toolbar.urls)),  # Rota para acessar o Django Debug Toolbar
     ]
-
-# Comentários explicativos:
-# 1. Incluímos o `path("admin/", admin.site.urls)` para acessar o painel administrativo.
-# 2. Usamos `re_path` para configurar as rotas dos aplicativos "order" e "product" com suporte para múltiplas versões (v1 e v2).
-# 3. Corrigimos o parâmetro `name` para a URL de autenticação de token.
-# 4. Adicionamos uma condicional para verificar se o modo DEBUG está ativado e, se estiver, adicionamos a URL para o Django Debug Toolbar.
