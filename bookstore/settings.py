@@ -10,9 +10,7 @@ DEBUG = int(os.environ.get("DEBUG", default=0))
 
 # Hosts configuration
 # Alterações realizadas em 23/10/2024 para testes
-# ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", "localhost").split(",")
 ALLOWED_HOSTS = ['localhost','127.0.0.1', 'ebac-livraria-api-a99a1687e9d4.herokuapp.com']
-
 
 # Application definition
 INSTALLED_APPS = [
@@ -29,7 +27,6 @@ INSTALLED_APPS = [
     "product",
     "debug_toolbar",
 ]
-
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",  # Reforça configurações de segurança
@@ -63,10 +60,18 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "bookstore.wsgi.application"
 
-STATIC_ROOT = BASE_DIR / 'staticfiles' # Diretório onde todos os arquivos estáticos serão coletados pelo comando 'collectstatic'
+# Static files configuration
+STATIC_ROOT = BASE_DIR / 'staticfiles'  # Diretório onde todos os arquivos estáticos serão coletados pelo comando 'collectstatic'
+STATIC_URL = "static/"
 
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
 
 # Database configuration, using environment variables
 DATABASES = {
@@ -96,12 +101,10 @@ TIME_ZONE = "UTC"
 USE_I18N = True
 USE_TZ = True
 
-# Static files (CSS, JavaScript, Images)
-STATIC_URL = "static/"
-
 # Default primary key field type
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+# Django Debug Toolbar
 INTERNAL_IPS = ["127.0.0.1"]
 
 # Django REST Framework settings
