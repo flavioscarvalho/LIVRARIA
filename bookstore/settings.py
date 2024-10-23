@@ -117,3 +117,9 @@ REST_FRAMEWORK = {
         "rest_framework.authentication.TokenAuthentication",
     ],
 }
+
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://ebac-livraria-api-a99a1687e9d4.herokuapp.com',
+]
+
