@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     "debug_toolbar",
 ]
 
+
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",  # Reforça configurações de segurança
     "whitenoise.middleware.WhiteNoiseMiddleware",  # Gerenciamento de arquivos estáticos
