@@ -9,7 +9,10 @@ SECRET_KEY = os.environ.get("SECRET_KEY", "fallback-secret-key")
 DEBUG = int(os.environ.get("DEBUG", default=0))
 
 # Hosts configuration
-ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", "localhost").split(",")
+# Alterações realizadas em 23/10/2024 para testes
+# ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", "localhost").split(",")
+ALLOWED_HOSTS = ['localhost','127.0.0.1', 'ebac-livraria-api-a99a1687e9d4.herokuapp.com']
+
 
 # Application definition
 INSTALLED_APPS = [
@@ -28,14 +31,15 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    "debug_toolbar.middleware.DebugToolbarMiddleware",  # For Django Debug Toolbar
-    "django.middleware.security.SecurityMiddleware",
-    "django.contrib.sessions.middleware.SessionMiddleware",
-    "django.middleware.common.CommonMiddleware",
-    "django.middleware.csrf.CsrfViewMiddleware",
-    "django.contrib.auth.middleware.AuthenticationMiddleware",
-    "django.contrib.messages.middleware.MessageMiddleware",
-    "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "django.middleware.security.SecurityMiddleware",  # Reforça configurações de segurança
+    "whitenoise.middleware.WhiteNoiseMiddleware",  # Gerenciamento de arquivos estáticos
+    "django.contrib.sessions.middleware.SessionMiddleware",  # Habilita o uso de sessões
+    "django.middleware.common.CommonMiddleware",  # Middleware comum para várias funcionalidades
+    "django.middleware.csrf.CsrfViewMiddleware",  # Proteção contra CSRF
+    "django.contrib.auth.middleware.AuthenticationMiddleware",  # Gerencia a autenticação do usuário
+    "django.contrib.messages.middleware.MessageMiddleware",  # Gerencia mensagens no sistema
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",  # Protege contra ataques de clickjacking
+    "debug_toolbar.middleware.DebugToolbarMiddleware",  # Django Debug Toolbar
 ]
 
 ROOT_URLCONF = "bookstore.urls"
@@ -57,6 +61,11 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "bookstore.wsgi.application"
+
+STATIC_ROOT = BASE_DIR / 'staticfiles' # Diretório onde todos os arquivos estáticos serão coletados pelo comando 'collectstatic'
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 
 # Database configuration, using environment variables
 DATABASES = {
