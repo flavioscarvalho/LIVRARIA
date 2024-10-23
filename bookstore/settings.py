@@ -11,7 +11,7 @@ DEBUG = int(os.environ.get("DEBUG", default=0))
 # Hosts configuration
 # Alterações realizadas em 23/10/2024 para testes
 # ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", "localhost").split(",")
-ALLOWED_HOSTS = ['localhost','127.0.0.1', 'ebac-livraria-api.herokuapp.com']
+ALLOWED_HOSTS = ['localhost','127.0.0.1', 'ebac-livraria-api-a99a1687e9d4.herokuapp.com']
 
 
 # Application definition
