@@ -52,84 +52,40 @@ cover/
 *.mo
 *.pot
 
-# Django stuff:
+# Django-specific files
 *.log
 local_settings.py
 db.sqlite3
 db.sqlite3-journal
 
-# Flask stuff:
+# Flask-specific files
 instance/
 .webassets-cache
 
-# Scrapy stuff:
+# Scrapy-specific files
 .scrapy/
 
 # Sphinx documentation
 docs/_build/
 
-# PyBuilder
-.pybuilder/
-target/
-
 # Jupyter Notebook
 .ipynb_checkpoints/
-
-# IPython
-profile_default/
-ipython_config.py
-
-# pyenv
-.python-version
-
-# pipenv
-# Pipfile.lock
-
-# poetry
-# poetry.lock
-
-# pdm
-.pdm.toml
-.pdm-python
-.pdm-build/
-
-# PEP 582
-__pypackages__/
-
-# Celery stuff
-celerybeat-schedule
-celerybeat.pid
-
-# SageMath parsed files
-*.sage.py
 
 # Environments
 .env
 .venv/
 env/
 
-# Spyder project settings
-.spyderproject/
 
-# Rope project settings
+# IDE specific files
+.idea/
+.spyderproject/
 .ropeproject/
 
-# mkdocs documentation
-/site/
-
-# mypy
-.mypy_cache/
-.dmypy.json
-dmypy.json
-
-# Pyre type checker
+# Miscellaneous
+__pypackages__/
+celerybeat-schedule
+celerybeat.pid
 .pyre/
-
-# pytype static type analyzer
 .pytype/
-
-# Cython debug symbols
 cython_debug/
-
-# PyCharm
-# .idea/
