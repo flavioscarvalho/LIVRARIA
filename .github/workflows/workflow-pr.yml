@@ -19,6 +19,9 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
+        # Ajuste adicionado: mapeamento da porta do PostgreSQL
+        ports:
+          - 5432:5432
 
     steps:
       - uses: actions/checkout@v3
@@ -41,6 +44,14 @@ jobs:
       - name: Install dependencies
         run: |
           poetry install --no-root
+
+      - name: Wait for PostgreSQL to be ready
+        # Ajuste adicionado: aguarda a inicialização completa do banco de dados antes de executar os testes
+        run: |
+          until pg_isready -h localhost -U bookstore_dev -d bookstore_dev_db; do
+            echo "Waiting for PostgreSQL to be ready..."
+            sleep 3
+          done
 
       - name: Run Tests
         env:
