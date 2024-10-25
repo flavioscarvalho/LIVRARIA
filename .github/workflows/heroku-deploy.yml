@@ -1,47 +1,70 @@
-name: Push Container to Heroku
+name: Python Pull Request Workflow
 
-on:
-  push:
-    branches:
-      - 'main'
+on: [pull_request]
 
 jobs:
-  heroku-deploy:
+  qa:
+    name: Quality check
     runs-on: ubuntu-latest
-    steps:
-      - name: Check out repository
-        uses: actions/checkout@v2
-      - name: Deploy to Heroku
-        uses: akhileshns/heroku-deploy@v3.12.12
-        with:
-          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
-          heroku_app_name: ${{ secrets.HEROKU_APP_NAME }}
-          heroku_email: ${{ secrets.HEROKU_EMAIL }}
 
-  custom-deploy:
-    needs: heroku-deploy
-    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:13
+        env:
+          POSTGRES_DB: bookstore_dev_db
+          POSTGRES_USER: bookstore_dev
+          POSTGRES_PASSWORD: bookstore_dev
+        options: >-
+          --health-cmd "pg_isready -U bookstore_dev -d bookstore_dev_db"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
     steps:
-      - name: Check out repository
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
         with:
-          fetch-depth: 0
-      - name: Heroku login credentials
+          python-version: '3.12.2'
+
+      - name: Install Poetry
         run: |
-          cat > ~/.netrc <<EOF
-            machine api.heroku.com
-              login $HEROKU_EMAIL
-              password $HEROKU_API_KEY
-            machine git.heroku.com
-              login $HEROKU_EMAIL
-              password $HEROKU_API_KEY
-          EOF
+          pip install -U pip
+          pip install poetry==1.8.4
         env:
-          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-          HEROKU_EMAIL: ${{ secrets.HEROKU_EMAIL }}
-      - name: Add Heroku remote
-        run: heroku git:remote --app $HEROKU_APP_NAME
+          POETRY_VIRTUALENVS_CREATE: false
+
+      - name: View Poetry --help
+        run: poetry --help
+
+      - name: Install dependencies
+        run: |
+          poetry install --no-root
+
+      - name: Wait for PostgreSQL to be ready
+        # Aguarda o PostgreSQL estar disponível antes de continuar
+        run: |
+          until pg_isready -h postgres -U bookstore_dev -d bookstore_dev_db; do
+            echo "Waiting for PostgreSQL to be ready..."
+            sleep 3
+          done
+
+      - name: Run Tests
         env:
-          HEROKU_APP_NAME: ${{ secrets.HEROKU_APP_NAME }}
-      - name: Push to Heroku
-        run: git push heroku main:main
+          DEBUG: 1
+          SECRET_KEY: foo
+          DJANGO_ALLOWED_HOSTS: localhost,127.0.0.1,[::1]
+          DATABASE_URL: postgres://bookstore_dev:bookstore_dev@postgres:5432/bookstore_dev_db  # Usando 'postgres' como o host
+        run: |
+          poetry run python manage.py test
+
+      - name: Wemake Python Styleguide
+        uses: wemake-services/wemake-python-styleguide@0.16.0
+        continue-on-error: true
+        with:
+          reporter: 'github-pr-review'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
