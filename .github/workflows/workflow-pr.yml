@@ -1,10 +1,25 @@
 name: Python Pull Request Workflow
+
 on: [pull_request]
 
 jobs:
   qa:
     name: Quality check
     runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:13
+        env:
+          POSTGRES_DB: bookstore_dev_db
+          POSTGRES_USER: bookstore_dev
+          POSTGRES_PASSWORD: bookstore_dev
+        options: >-
+          --health-cmd "pg_isready -U bookstore_dev -d bookstore_dev_db"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
       - uses: actions/checkout@v3
 
@@ -28,6 +43,11 @@ jobs:
           poetry install --no-root
 
       - name: Run Tests
+        env:
+          DEBUG: 1
+          SECRET_KEY: foo
+          DJANGO_ALLOWED_HOSTS: localhost,127.0.0.1,[::1]
+          DATABASE_URL: postgres://bookstore_dev:bookstore_dev@localhost:5432/bookstore_dev_db
         run: |
           poetry run python manage.py test
 
@@ -38,4 +58,3 @@ jobs:
           reporter: 'github-pr-review'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
