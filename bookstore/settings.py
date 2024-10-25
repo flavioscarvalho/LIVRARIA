@@ -115,4 +115,8 @@ REST_FRAMEWORK = {
 }
 
 # Trusted origins for CSRF
-CSRF_TRUSTED_ORIGINS = os.environ.get('CSRF_TRUSTED_ORIGINS', '').split(',')
+CSRF_TRUSTED_ORIGINS = [
+    origin if origin.startswith(('http://', 'https://')) else f"http://{origin}"
+    for origin in os.environ.get('CSRF_TRUSTED_ORIGINS', '').split(',')
+    if origin
+]
