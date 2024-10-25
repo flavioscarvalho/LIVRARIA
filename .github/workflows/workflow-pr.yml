@@ -19,9 +19,8 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-        # Ajuste adicionado: mapeamento da porta do PostgreSQL
         ports:
-          - 5432:5432
+          - 5432:5432  # Mapeamento da porta adicionado
 
     steps:
       - uses: actions/checkout@v3
@@ -46,9 +45,9 @@ jobs:
           poetry install --no-root
 
       - name: Wait for PostgreSQL to be ready
-        # Ajuste adicionado: aguarda a inicialização completa do banco de dados antes de executar os testes
+        # Verifica se o banco de dados PostgreSQL está pronto antes de continuar
         run: |
-          until pg_isready -h localhost -U bookstore_dev -d bookstore_dev_db; do
+          until pg_isready -h postgres -U bookstore_dev -d bookstore_dev_db; do
             echo "Waiting for PostgreSQL to be ready..."
             sleep 3
           done
@@ -58,7 +57,7 @@ jobs:
           DEBUG: 1
           SECRET_KEY: foo
           DJANGO_ALLOWED_HOSTS: localhost,127.0.0.1,[::1]
-          DATABASE_URL: postgres://bookstore_dev:bookstore_dev@localhost:5432/bookstore_dev_db
+          DATABASE_URL: postgres://bookstore_dev:bookstore_dev@postgres:5432/bookstore_dev_db  # Usando 'postgres' como o host
         run: |
           poetry run python manage.py test
 
